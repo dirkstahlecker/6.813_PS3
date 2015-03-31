@@ -25,6 +25,7 @@ var Board = function(size) {
 
     // boardSize is number of squares on one side of checkerboard
     this.boardSize = size;
+    this.sidelen = 400 / size;
 
     this.undoHistory = [];
     
@@ -184,26 +185,26 @@ var Board = function(size) {
 		}
 	}
 
-    this.addToUndoQueue = function(data) {
-        //this.undoHistory.push(data)
-    }
 
     this.undo = function() {
         var hist = this.undoHistory;
 
-        console.log('undoing from board');
-        console.log('undoHistory:');
-        console.log(hist);
+        if (hist.length > 0) {
+            console.log('undoing from board');
+            console.log('undoHistory:');
+            console.log(hist);
 
-        var lastmove = hist[hist.length - 1];
-        console.log('lastmove: ');
-        console.log(lastmove);
-        hist.splice(hist.length - 3, 1);
+            var lastmove = hist[hist.length - 1];
+            console.log('lastmove: ');
+            console.log(lastmove);
+            hist.splice(hist.length - 3, 1);
 
-        //first put piece back
-        this.add(lastmove.checker, lastmove.fromRow, lastmove.fromCol);
+            //move piece back to previous position
+            this.remove(lastmove.checker);
+            this.add(lastmove.checker, lastmove.fromRow, lastmove.fromCol);
 
-        //then put back removed checkers
+            drawArrow(lastmove.toCol, lastmove.toRow, lastmove.fromCol, lastmove.fromRow, this.sidelen);
+        }
     }
 	
 	/**
