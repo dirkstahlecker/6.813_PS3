@@ -177,6 +177,7 @@ function moveChecker(checker,coords) {
     dragContext.clearRect(0,0,400,400);
     dragContext.drawImage(img, x, y); //TODO: add in width and height
     
+    
 
 
 /*
