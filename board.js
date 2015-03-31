@@ -155,8 +155,9 @@ var Board = function(size) {
 	 * Requires checker to be already found on this board, and (toRow,toCol)
 	 * must denote a valid empty square.
 	 */
-	this.moveTo = function(checker, toRow, toCol){
+	this.moveTo = function(checker, toRow, toCol) {
 		if (this.isEmptyLocation(toRow,toCol)){
+            console.log('moveTo');
 
 			var details = {checker:checker, toRow:toRow, toCol:toCol, fromRow:checker.row, fromCol:checker.col};
 		
@@ -174,8 +175,34 @@ var Board = function(size) {
 			this.checkRep();
 			
 			this.dispatchBoardEvent("move", details);
+            
+            this.undoHistory.push(details);
+            //console.log(undoHistory);
+            console.log('undoHistory:');
+            console.log(this.undoHistory);
+            console.log(this.undoHistory.length);
+            
 		}
 	}
+
+    this.addToUndoQueue = function(data) {
+        this.undoHistory.push()
+    }
+
+    this.undo = function() {
+        console.log('undoing from board');
+        console.log('undoHistory:');
+        console.log(this.undoHistory);
+
+        var lastmove = this.undoHistory[undoHistory.length - 1];
+        console.log(lastmove);
+        this.undoHistory.splice(undoHistory.length - 3, 1);
+
+        //first put piece back
+        this.add(lastmove.checker, lastmove.from_row, lastmove.from_col);
+
+        //then put back removed checkers
+    }
 	
 	/**
 	 * Remove a checker from this board.  Requires checker to be found on this

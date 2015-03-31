@@ -242,6 +242,7 @@ function moveChecker(checker,coords) {
     dragContext.drawImage(img, x, y, sidelen, sidelen); //TODO: add in width and height
 }
 
+/*
 function undo() {
     if (undoHistory.length <= 0) {
         return; //do nothing
@@ -273,4 +274,5 @@ function undo() {
         //then put back checkers removed
     }
 }
+*/
 

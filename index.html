@@ -283,13 +283,14 @@
             var playerColor = whoseTurn;
             var playerDirection = directionOf(playerColor);
             var result = rules.makeRandomMove(playerColor, playerDirection);
+            board.addToUndoQueue(result);
             if (result != null) {
                 toggleTurn();
             }
         });
 
         $('#btnUndo').click(function(evt) {
-            undo();
+            board.undo();
         });
 
         board.prepareNewGame();
