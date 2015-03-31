@@ -157,7 +157,6 @@ var Board = function(size) {
 	 */
 	this.moveTo = function(checker, toRow, toCol) {
 		if (this.isEmptyLocation(toRow,toCol)){
-            console.log('moveTo');
 
 			var details = {checker:checker, toRow:toRow, toCol:toCol, fromRow:checker.row, fromCol:checker.col};
 		
@@ -177,29 +176,32 @@ var Board = function(size) {
 			this.dispatchBoardEvent("move", details);
             
             this.undoHistory.push(details);
-            //console.log(undoHistory);
+            /*
             console.log('undoHistory:');
             console.log(this.undoHistory);
             console.log(this.undoHistory.length);
-            
+            */
 		}
 	}
 
     this.addToUndoQueue = function(data) {
-        this.undoHistory.push()
+        //this.undoHistory.push(data)
     }
 
     this.undo = function() {
+        var hist = this.undoHistory;
+
         console.log('undoing from board');
         console.log('undoHistory:');
-        console.log(this.undoHistory);
+        console.log(hist);
 
-        var lastmove = this.undoHistory[undoHistory.length - 1];
+        var lastmove = hist[hist.length - 1];
+        console.log('lastmove: ');
         console.log(lastmove);
-        this.undoHistory.splice(undoHistory.length - 3, 1);
+        hist.splice(hist.length - 3, 1);
 
         //first put piece back
-        this.add(lastmove.checker, lastmove.from_row, lastmove.from_col);
+        this.add(lastmove.checker, lastmove.fromRow, lastmove.fromCol);
 
         //then put back removed checkers
     }
