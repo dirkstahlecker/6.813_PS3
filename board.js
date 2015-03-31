@@ -25,6 +25,8 @@ var Board = function(size) {
 
     // boardSize is number of squares on one side of checkerboard
     this.boardSize = size;
+
+    this.undoHistory = [];
     
     // square is a two dimensional array representating the checkerboard
     // square[row][col] is the Checker in that square, or null if square is empty

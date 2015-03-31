@@ -90,6 +90,8 @@ var blackImg;
 var redKing;
 var blackKing;
 
+var undoHistory = [];
+
 //uses absolute positioned div and guaranteed 400px board size
 //154,10 is origin for board
 function insideBoard(x,y) {
@@ -121,10 +123,7 @@ function mouseDown(e) {
         var c = Math.floor((e.clientX - 154) / (400 / board.size()));
         var r = Math.floor((e.clientY - 10) / (400 / board.size()));
 
-        console.log(r + ', ' + c);
-
         var checker = board.getCheckerAt(r,c);
-        console.log(checker);
         if (checker != null && checker.color == whoseTurn) {
             draggingChecker = checker;
             checkerPrevPos = [checker.col,checker.row];
@@ -137,7 +136,6 @@ function mouseDown(e) {
     }
 }
 function mouseUp(e) {
-    console.log('MOUSE UP');
 
     if (draggingChecker) {
         var canvas = document.getElementById('mainCanvas');
@@ -171,11 +169,13 @@ function mouseUp(e) {
             else {
                 turnDir = -1;
             }
-            if (rules.makeMove(draggingChecker,turnDir,turnDir,r,c) == null) { //illegal
+            var move = rules.makeMove(draggingChecker,turnDir,turnDir,r,c);
+            if (move == null) { //illegal
                 illegal = true;
             }
             else {
                 toggleTurn();
+                undoHistory.push(move);
             }
         }
 
@@ -213,6 +213,7 @@ function mouseMove(e) {
 }
 
 function moveChecker(checker,coords) {
+    var sidelen = 400 / board.size();
     var dragCanvas = document.getElementById('dragCanvas');
     var dragContext = dragCanvas.getContext('2d');
 
@@ -238,21 +239,38 @@ function moveChecker(checker,coords) {
     }
 
     dragContext.clearRect(0,0,400,400);
-    dragContext.drawImage(img, x, y); //TODO: add in width and height
-    
-
-
-
-/*
-        //draw over old piece
-        context.beginPath();
-        context.rect(e.details.fromCol * sidelen, e.details.fromRow * sidelen, sidelen, sidelen);
-        context.fillStyle = 'gray';
-        context.fill();
-
-        drawArrow(e.details.fromCol, e.details.fromRow, e.details.toCol, e.details.toRow, sidelen);
-*/
-    
+    dragContext.drawImage(img, x, y, sidelen, sidelen); //TODO: add in width and height
 }
 
+function undo() {
+    if (undoHistory.length <= 0) {
+        return; //do nothing
+    }
+
+    console.log('undoing history before');
+    console.log(undoHistory);
+    var color;
+    if (whoseTurn == 'red') {
+        color = 'black';
+    }
+    else {
+        color = 'red';
+    }
+
+    var lastmove = undoHistory[undoHistory.length - 1];
+    console.log(lastmove);
+    undoHistory = undoHistory.splice(undoHistory.length - 3, 1);
+    console.log('undoing history after pop');
+    console.log(undoHistory);
+    if (lastmove.made_king) {
+
+    }
+    else { //just a movement
+        //first move piece back
+        var checker = new Checker(color, false);
+        board.add(checker, lastmove.from_col, lastmove.from_row);
+
+        //then put back checkers removed
+    }
+}
 
