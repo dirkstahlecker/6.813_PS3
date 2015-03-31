@@ -125,7 +125,7 @@ function mouseDown(e) {
 
         var checker = board.getCheckerAt(r,c);
         console.log(checker);
-        if (checker != null) {
+        if (checker != null && checker.color == whoseTurn) {
             draggingChecker = checker;
             checkerPrevPos = [checker.col,checker.row];
 
@@ -139,47 +139,69 @@ function mouseDown(e) {
 function mouseUp(e) {
     console.log('MOUSE UP');
 
-    var canvas = document.getElementById('mainCanvas');
-    var context = canvas.getContext('2d');
+    if (draggingChecker) {
+        var canvas = document.getElementById('mainCanvas');
+        var context = canvas.getContext('2d');
 
-    var dragCanvas = document.getElementById('dragCanvas');
-    var dragContext = dragCanvas.getContext('2d');
+        var dragCanvas = document.getElementById('dragCanvas');
+        var dragContext = dragCanvas.getContext('2d');
 
-    dragContext.clearRect(0,0,400,400);
+        dragContext.clearRect(0,0,400,400);
 
-    var sidelen = 400 / board.size();
+        var sidelen = 400 / board.size();
 
-    var x = convertCoords(e.clientX, e.clientY)[0];
-    var y = convertCoords(e.clientX, e.clientY)[1];
+        var x = convertCoords(e.clientX, e.clientY)[0];
+        var y = convertCoords(e.clientX, e.clientY)[1];
 
-    var c = Math.floor((e.clientX - 154) / (400 / board.size()));
-    var r = Math.floor((e.clientY - 10) / (400 / board.size()));
+        var c = Math.floor((e.clientX - 154) / (400 / board.size()));
+        var r = Math.floor((e.clientY - 10) / (400 / board.size()));
 
-    if (board.getCheckerAt(r,c) != null || x > 400 || y> 400) { //illegal, put back
-        var img = new Image();
-        if (checker.color == 'red') {
-            if (checker.isKing) {
-                img.src = 'graphics/red-king.png'
-            }
-            else {
-                img.src = 'graphics/red-piece.png';
-            }
+        var illegal = false;
+
+        if ( x > 400 || y > 400) { //illegal, put back
+            illegal = true;
         }
         else {
-            if (checker.isKing) {
-                img.src = 'graphics/black-king.png';
+            var turnDir;
+            var playerDir;
+
+            if (whoseTurn == 'red') {
+                turnDir = 1;
             }
             else {
-                img.src = 'graphics/black-piece.png';
+                turnDir = -1;
+            }
+            if (rules.makeMove(draggingChecker,turnDir,turnDir,r,c) == null) { //illegal
+                illegal = true;
+            }
+            else {
+                toggleTurn();
             }
         }
-        context.drawImage(img, checkerPrevPos[0] * sidelen, checkerPrevPos[1] * sidelen, sidelen, sidelen);
 
+        if (illegal) {
+            var img = new Image();
+            if (checker.color == 'red') {
+                if (checker.isKing) {
+                    img.src = 'graphics/red-king.png'
+                }
+                else {
+                    img.src = 'graphics/red-piece.png';
+                }
+            }
+            else {
+                if (checker.isKing) {
+                    img.src = 'graphics/black-king.png';
+                }
+                else {
+                    img.src = 'graphics/black-piece.png';
+                }
+            }
+            context.drawImage(img, checkerPrevPos[0] * sidelen, checkerPrevPos[1] * sidelen, sidelen, sidelen);
+        }
+
+        draggingChecker = null;
     }
-    else { //legal
-        board.moveTo(draggingChecker,r,c);
-    }
-    draggingChecker = null;
 }
 function mouseMove(e) {
     var x = e.clientX;
