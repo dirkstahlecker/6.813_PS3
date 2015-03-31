@@ -192,6 +192,9 @@
         var arrowCanvas = document.getElementById('arrowCanvas');
         var arrowContext = arrowCanvas.getContext('2d');
 
+        var dragCanvas = document.getElementById('dragCanvas');
+        var dragContext = dragCanvas.getContext('2d');
+
         board.addEventListener('add',function (e) {
             var checker = e.details.checker;
 
@@ -264,6 +267,7 @@
         $("#btnNewGame").click(function(evt) {
             console.log('new game!');
             arrowContext.clearRect(0,0,400,400);
+            dragContext.clearRect(0,0,400,400); //TODO: make this work
 
             //if red's turn, make it black's turn again
             if ($('#turnIndicator').css('background-color') == 'rgb(255, 0, 0)') {

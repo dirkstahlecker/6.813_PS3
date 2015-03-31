@@ -19,13 +19,11 @@ function drawBoard() {
     var size = params['size'];
 
     if (size == undefined) {
-        console.log('setting default');
         n = defaultBoardSize;
     }
     else {
         var n = parseInt(size);
     }
-    console.log(n);
     
     var sidelen = 400 / n;
 
@@ -34,11 +32,6 @@ function drawBoard() {
     var context = canvas.getContext('2d');
 
 
-
-
-    //context.lineWidth = 0;
-    //context.strokeStyle = 'black';
-    //context.stroke();
 
     var bool = 1;
     var color = 'gray';
@@ -74,7 +67,6 @@ $(document).ready(function () {
     document.onmousedown = mouseDown;
     document.onmouseup = mouseUp;
     document.onmousemove = mouseMove;
-    
 });
 
 function preloadImages() {
@@ -128,14 +120,59 @@ function mouseDown(e) {
         console.log(r + ', ' + c);
 
         var checker = board.getCheckerAt(r,c);
+        console.log(checker);
         if (checker != null) {
             draggingChecker = checker;
         }
     }
 }
 function mouseUp(e) {
+    console.log('MOUSE UP');
+
+    var canvas = document.getElementById('mainCanvas');
+    var context = canvas.getContext('2d');
+
+    var dragCanvas = document.getElementById('dragCanvas');
+    var dragContext = dragCanvas.getContext('2d');
+
+    dragContext.clearRect(0,0,400,400);
+
+    var sidelen = 400 / board.size();
+
+    var c = Math.floor((e.clientX - 154) / (400 / board.size()));
+    var r = Math.floor((e.clientY - 10) / (400 / board.size()));
+
+
+    if (board.getCheckerAt(r,c) == null) { //legal move, place there
+        board.moveTo(draggingChecker,r,c);
+        /*var img;
+        if (checker.color == 'red') {
+            if (checker.isKing) {
+                img = redKing;
+            }
+            else {
+                img = redImg;
+            }
+        }
+        else {
+            if (checker.isKing) {
+                img = blackKing;
+            }
+            else {
+                img = blackImg;
+            }
+        }
+
+        img.onload = function() {
+            context.drawImage(img, c * sidelen, r * sidelen, sidelen, sidelen);
+        }
+        */
+
+    }
+    else { //illegal, put back to original position
+
+    }
     draggingChecker = null;
-    //TODO: add placement code here e.g. snapping back to original position
 }
 function mouseMove(e) {
     var x = e.clientX;
@@ -152,9 +189,6 @@ function moveChecker(checker,coords) {
 
     var x = coords[0];
     var y = coords[1];
-
-    console.log(x + ', ' + y);
-    console.log(checker);
 
     var img;
     if (checker.color == 'red') {
@@ -177,7 +211,7 @@ function moveChecker(checker,coords) {
     dragContext.clearRect(0,0,400,400);
     dragContext.drawImage(img, x, y); //TODO: add in width and height
     
-    
+
 
 
 /*
