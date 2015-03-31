@@ -84,7 +84,7 @@ function preloadImages() {
 }
 
 var draggingChecker = null; //holds checker being dragged, or null
-var checkerPos = null; //holds pos of checker being dragged
+var checkerPrevPos = null; //holds pos of checker being dragged
 var redImg;
 var blackImg;
 var redKing;
@@ -112,6 +112,10 @@ function convertCoords(x,y) {
 }
 
 function mouseDown(e) {
+    var canvas = document.getElementById('mainCanvas');
+    var context = canvas.getContext('2d');
+    var sidelen = 400 / board.size();
+
     if (insideBoard(e.clientX, e.clientY) != -1) {
 
         var c = Math.floor((e.clientX - 154) / (400 / board.size()));
@@ -123,6 +127,12 @@ function mouseDown(e) {
         console.log(checker);
         if (checker != null) {
             draggingChecker = checker;
+            checkerPrevPos = [checker.col,checker.row];
+
+            context.beginPath();
+            context.rect(checkerPrevPos[0] * sidelen, checkerPrevPos[1] * sidelen, sidelen, sidelen);
+            context.fillStyle = 'gray';
+            context.fill();
         }
     }
 }
@@ -139,38 +149,35 @@ function mouseUp(e) {
 
     var sidelen = 400 / board.size();
 
+    var x = convertCoords(e.clientX, e.clientY)[0];
+    var y = convertCoords(e.clientX, e.clientY)[1];
+
     var c = Math.floor((e.clientX - 154) / (400 / board.size()));
     var r = Math.floor((e.clientY - 10) / (400 / board.size()));
 
-
-    if (board.getCheckerAt(r,c) == null) { //legal move, place there
-        board.moveTo(draggingChecker,r,c);
-        /*var img;
+    if (board.getCheckerAt(r,c) != null || x > 400 || y> 400) { //illegal, put back
+        var img = new Image();
         if (checker.color == 'red') {
             if (checker.isKing) {
-                img = redKing;
+                img.src = 'graphics/red-king.png'
             }
             else {
-                img = redImg;
+                img.src = 'graphics/red-piece.png';
             }
         }
         else {
             if (checker.isKing) {
-                img = blackKing;
+                img.src = 'graphics/black-king.png';
             }
             else {
-                img = blackImg;
+                img.src = 'graphics/black-piece.png';
             }
         }
-
-        img.onload = function() {
-            context.drawImage(img, c * sidelen, r * sidelen, sidelen, sidelen);
-        }
-        */
+        context.drawImage(img, checkerPrevPos[0] * sidelen, checkerPrevPos[1] * sidelen, sidelen, sidelen);
 
     }
-    else { //illegal, put back to original position
-
+    else { //legal
+        board.moveTo(draggingChecker,r,c);
     }
     draggingChecker = null;
 }
