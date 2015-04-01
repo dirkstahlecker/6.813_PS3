@@ -292,6 +292,10 @@
             board.undo();
         });
 
+        $('#btnRedo').click(function(evt) {
+            board.redo();
+        });
+
         board.prepareNewGame();
 
     });
@@ -312,6 +316,7 @@
               <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
               <tr><td>&nbsp;</td></tr>
               <tr><td><input id="btnUndo" type="button" name="undo" value="Undo" /></td></tr>
+              <tr><td><input id="btnRedo" type="button" name="redo" value="Redo" /></td></tr>
             </table>
           </div>
         </td>

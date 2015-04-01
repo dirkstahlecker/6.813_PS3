@@ -67,6 +67,9 @@ $(document).ready(function () {
     document.onmousedown = mouseDown;
     document.onmouseup = mouseUp;
     document.onmousemove = mouseMove;
+
+    $('#btnUndo').attr('disabled','disabled');
+    $('#btnRedo').attr('disabled','disabled');
 });
 
 function preloadImages() {
@@ -276,3 +279,10 @@ function undo() {
 }
 */
 
+
+
+//TODO: 
+/* Bugs:
+    -checker changes color on illegal move
+    -issues with undoing them moving again
+*/

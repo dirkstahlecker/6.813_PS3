@@ -28,6 +28,7 @@ var Board = function(size) {
     this.sidelen = 400 / size;
 
     this.undoHistory = [];
+    this.undoIndex = -1; //gets incremented automatically to zero when first element is added
     
     // square is a two dimensional array representating the checkerboard
     // square[row][col] is the Checker in that square, or null if square is empty
@@ -177,11 +178,11 @@ var Board = function(size) {
 			this.dispatchBoardEvent("move", details);
             
             this.undoHistory.push(details);
-            /*
-            console.log('undoHistory:');
-            console.log(this.undoHistory);
-            console.log(this.undoHistory.length);
-            */
+            this.undoIndex = this.undoIndex + 1; //increment undo index to point to last element
+
+            $('#btnUndo').removeAttr('disabled');
+            $('#btnRedo').removeAttr('disabled');
+
 		}
 	}
 
@@ -194,17 +195,25 @@ var Board = function(size) {
             console.log('undoHistory:');
             console.log(hist);
 
-            var lastmove = hist[hist.length - 1];
-            console.log('lastmove: ');
-            console.log(lastmove);
-            hist.splice(hist.length - 3, 1);
+            var lastmove = hist[this.undoIndex];
+            this.undoIndex = this.undoIndex - 1;
+            if (this.undoIndex < 0) {
+                $('#btnUndo').attr('disabled','disabled');
+                this.undoIndex = 0;
+            }
+            //hist.splice(hist.length - 3, 1);
 
             //move piece back to previous position
             this.remove(lastmove.checker);
             this.add(lastmove.checker, lastmove.fromRow, lastmove.fromCol);
 
             drawArrow(lastmove.toCol, lastmove.toRow, lastmove.fromCol, lastmove.fromRow, this.sidelen);
+
         }
+    }
+
+    this.redo = function() {
+
     }
 	
 	/**
