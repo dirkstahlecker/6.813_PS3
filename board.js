@@ -213,7 +213,37 @@ var Board = function(size) {
     }
 
     this.redo = function() {
+        console.log('redoing');
+        var hist = this.undoHistory;
 
+        if (this.undoIndex >= 0) {
+            var lastmove = hist[this.undoIndex];
+            console.log(lastmove);
+            this.undoIndex = this.undoIndex + 1;
+            if (this.undoIndex < 0) {
+                $('#btnUndo').attr('disabled','disabled');
+                this.undoIndex = 0;
+            }
+            //hist.splice(hist.length - 3, 1);
+
+            //move piece back to previous position
+            this.remove(lastmove.checker);
+            this.add(lastmove.checker, lastmove.toRow, lastmove.toCol);
+
+            //put back jumped pieces
+            console.log(lastmove);
+
+            drawArrow(lastmove.fromCol, lastmove.fromRow, lastmove.toCol, lastmove.toRow, this.sidelen);
+
+            if (this.undoIndex < 0) {
+                this.undoIndex = 0;
+                $('#btnRedo').attr('disabled','disabled');
+            }
+            else if (this.undoIndex >= this.undoHistory.length) {
+                this.undoIndex = this.undoHistory.length;
+                $('#btnRedo').attr('disabled','disabled');
+            }
+        }
     }
 	
 	/**
